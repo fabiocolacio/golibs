@@ -4,6 +4,28 @@ import(
     "golang.org/x/net/html"
 )
 
+// GetElementsByClass returns a slice of pointers to all element nodes
+// that have the specified class
+func GetElementsByClass(root *html.Node, class string) []*html.Node {
+    ch := make(chan *html.Node, 10)
+    var elements []*html.Node
+
+    predicate := func (node *html.Node) bool {
+        if node.Type == html.elementNode {
+            for _, attr := range node.Attr {
+                return (attr.Key == "class" && attr.Val == class)
+            }
+        }
+    }
+
+    go DepthFirstAccumulator(root, predicate, ch)
+    for element := range ch {
+        elements := append(elements, element)
+    }
+
+    return elements
+}
+
 // GetElementById searches for an html element with the given id attribute,
 // and returns a pointer to that element's node. The node parameter should be
 // the root of an html tree to search.
@@ -59,7 +81,6 @@ func DepthFirstAccumulator(root *html.Node, predicate func(*html.Node) bool, ch 
 
     close(ch)
 }
-
 
 // DepthFirstSearch performs a depth-first search on the tree who's root node is given
 // by root. The search ends when it finds a Node which satisfies the predicate function.
