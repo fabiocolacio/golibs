@@ -11,16 +11,19 @@ func GetElementsByClass(root *html.Node, class string) []*html.Node {
     var elements []*html.Node
 
     predicate := func (node *html.Node) bool {
-        if node.Type == html.elementNode {
+        if node.Type == html.ElementNode {
             for _, attr := range node.Attr {
-                return (attr.Key == "class" && attr.Val == class)
+                if attr.Key == "class" && attr.Val == class {
+                    return true
+                }
             }
         }
+        return false
     }
 
     go DepthFirstAccumulator(root, predicate, ch)
     for element := range ch {
-        elements := append(elements, element)
+        elements = append(elements, element)
     }
 
     return elements
