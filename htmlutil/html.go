@@ -63,6 +63,10 @@ func DepthFirstAccumulator(root *html.Node, predicate func(*html.Node) bool, ch 
             return nil
         }
 
+        if node == root && discovered[node] {
+            return nil
+        }
+
         discovered[node] = true
 
         if node.FirstChild != nil && !discovered[node.FirstChild]{
