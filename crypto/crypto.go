@@ -12,4 +12,4 @@ var (
 // of the password concatenated with the salt using Scrypt.
 func HashAndSaltPassword(passwd, salt []byte) ([]byte, error) {
     return scrypt.Key(passwd, salt, 32768, 8, 1, KeyHashLength)
-}}
+}
